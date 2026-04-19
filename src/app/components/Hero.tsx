@@ -7,29 +7,47 @@ const VIDEOS = [
   '/14973097_3840_2160_30fps.mp4',
 ];
 
+const CROSSFADE_DURATION = 1500; // ms
+
 export function Hero() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [videoIndex, setVideoIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  // "active" slot: which of the two video elements is currently visible (0 or 1)
+  const [activeSlot, setActiveSlot] = useState(0);
+  // which video file each slot is showing
+  const [slots, setSlots] = useState([0, 1]);
+  const videoRefs = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)];
   const prefersReducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     setIsLoaded(true);
+    videoRefs[0].current?.play().catch(() => {});
   }, []);
 
-  const handleVideoEnded = () => {
-    setVideoIndex((prev) => (prev + 1) % VIDEOS.length);
-  };
+  const handleVideoEnded = (slot: number) => {
+    if (slot !== activeSlot) return; // stale event, ignore
 
-  // When videoIndex changes, reload and play
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.load();
-      videoRef.current.play().catch(() => {});
-    }
-  }, [videoIndex]);
+    const nextVideoIdx = (slots[slot] + 2) % VIDEOS.length; // next after the inactive slot
+    const nextSlot = slot === 0 ? 1 : 0;
+
+    // Preload the next video in the inactive slot
+    setSlots((prev) => {
+      const updated = [...prev];
+      updated[nextSlot] = nextVideoIdx;
+      return updated;
+    });
+
+    // After state flush, play the inactive slot and crossfade
+    setTimeout(() => {
+      const nextVid = videoRefs[nextSlot].current;
+      if (nextVid) {
+        nextVid.currentTime = 0;
+        nextVid.play().catch(() => {});
+      }
+      setActiveSlot(nextSlot);
+    }, 50);
+  };
 
   return (
     <section
@@ -37,21 +55,24 @@ export function Hero() {
       className="min-h-screen relative overflow-hidden flex items-center justify-center pt-20"
       style={{ background: '#1a0533' }}
     >
-      {/* Background Video */}
-      {!prefersReducedMotion && (
+      {/* Background Videos — dual-slot crossfade */}
+      {!prefersReducedMotion && [0, 1].map((slot) => (
         <video
-          ref={videoRef}
-          key={videoIndex}
+          key={slot}
+          ref={videoRefs[slot]}
+          src={VIDEOS[slots[slot]]}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: 0 }}
-          autoPlay
+          style={{
+            zIndex: 0,
+            opacity: activeSlot === slot ? 1 : 0,
+            transition: `opacity ${CROSSFADE_DURATION}ms ease-in-out`,
+          }}
+          autoPlay={slot === 0}
           muted
           playsInline
-          onEnded={handleVideoEnded}
-        >
-          <source src={VIDEOS[videoIndex]} type="video/mp4" />
-        </video>
-      )}
+          onEnded={() => handleVideoEnded(slot)}
+        />
+      ))}
 
       {/* Dark gradient overlay for text readability */}
       <div
