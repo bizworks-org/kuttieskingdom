@@ -14,13 +14,11 @@ export function Footer() {
           {/* Logo & Tagline */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-4xl">👑</span>
-              <span
-                className="text-white"
-                style={{ fontFamily: "'Fredoka One', cursive", fontSize: '1.5rem' }}
-              >
-                Kutties Kingdom
-              </span>
+              <img
+                src="/logo.png"
+                alt="Kutties Kingdom"
+                className="h-16 object-contain"
+              />
             </div>
             <p
               className="text-gray-300"
@@ -88,7 +86,7 @@ export function Footer() {
           className="pt-8 border-t border-gray-700 text-center text-gray-400"
           style={{ fontFamily: "'Nunito', sans-serif", fontSize: '0.875rem' }}
         >
-          <p>© 2026 Kutties Kingdom · Made with ❤️ in Chennai</p>
+          <p>© 2026 Kutties Kingdom · Made with ❤️ by Bizworks</p>
         </div>
       </div>
     </footer>

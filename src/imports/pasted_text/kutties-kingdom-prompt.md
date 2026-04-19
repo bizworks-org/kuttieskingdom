@@ -237,7 +237,7 @@ Border radius:
 - **Logo + tagline left**
 - **Quick links center:** Home · Activities · Gallery · Book Now · Contact
 - **Contact right:** Address + phone
-- **Bottom bar:** "© 2025 Kutties Kingdom · Made with ❤️ in Chennai"
+- **Bottom bar:** "© 2025 Kutties Kingdom · Made with ❤️ by BizWorks"
 - **Floating emoji decorations:** 🎠 🌈 ⭐ 👑
 
 ---
