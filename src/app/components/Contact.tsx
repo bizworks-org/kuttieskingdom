@@ -19,7 +19,7 @@ export function Contact() {
               width="580"
               height="570"
               style={{ border: 0 }}
-              allowFullScreen=""
+              allowFullScreen={false}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Kutties Kingdom Location"
